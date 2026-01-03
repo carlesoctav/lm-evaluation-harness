@@ -1,0 +1,26 @@
+# LiveCodeBench - Minimal prompt
+task: olmo3_livecodebench
+dataset_path: livecodebench/code_generation_lite
+output_type: generate_until
+test_split: test
+doc_to_text: "{{question_content}}"
+doc_to_target: "{{code}}"
+num_fewshot: 0
+generation_kwargs:
+  until:
+    - "\nclass"
+    - "\ndef"
+    - "\n#"
+    - "\nif __name__"
+    - "</s>"
+    - "<|im_end|>"
+    - "<|eot_id|>"
+  do_sample: false
+  temperature: 0.0
+  max_gen_toks: 2048
+metric_list:
+  - metric: pass@1
+    aggregation: mean
+    higher_is_better: true
+metadata:
+  version: 1.0

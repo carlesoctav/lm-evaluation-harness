@@ -1,0 +1,25 @@
+task: olmo3_humaneval
+dataset_path: evalplus/humanevalplus
+output_type: generate_until
+test_split: test
+doc_to_text: "{{prompt}}"
+doc_to_target: "{{canonical_solution}}"
+num_fewshot: 0
+generation_kwargs:
+  until:
+    - "\nclass"
+    - "\ndef"
+    - "\n#"
+    - "\nif"
+    - "\nprint"
+    - "</s>"
+    - "<|im_end|>"
+    - "<|eot_id|>"
+  do_sample: false
+  temperature: 0.0
+metric_list:
+  - metric: pass@1
+    aggregation: mean
+    higher_is_better: true
+metadata:
+  version: 1.0

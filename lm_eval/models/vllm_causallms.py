@@ -40,7 +40,7 @@ try:
     from vllm.lora.request import LoRARequest
     from vllm.transformers_utils.tokenizer import get_tokenizer
 
-    if parse_version(version("vllm")) >= parse_version("0.8.3"):
+    if parse_version(version("vllm-tpu")) >= parse_version("0.8.3"):
         from vllm.entrypoints.chat_utils import resolve_hf_chat_template
 
     try:
@@ -228,14 +228,14 @@ class VLLM(TemplateLM):
             "enable_thinking", enable_thinking
         )
 
-        if parse_version(version("vllm")) >= parse_version("0.8.3"):
+        if parse_version(version("vllm-tpu")) >= parse_version("0.8.3"):
             kwargs_resolve_hf_chat_template = {
                 "tokenizer": self.tokenizer,
                 "chat_template": None,
                 "tools": None,
             }
 
-            if parse_version(version("vllm")) >= parse_version("0.9.0"):
+            if parse_version(version("vllm-tpu")) >= parse_version("0.9.0"):
                 if self.data_parallel_size <= 1:
                     kwargs_resolve_hf_chat_template["model_config"] = (
                         self.model.llm_engine.model_config
@@ -265,7 +265,7 @@ class VLLM(TemplateLM):
         self._max_gen_toks = max_gen_toks
 
         if lora_local_path is not None:
-            assert parse_version(version("vllm")) > parse_version("0.3.0"), (
+            assert parse_version(version("vllm-tpu")) > parse_version("0.3.0"), (
                 "lora adapters only compatible with vllm > v0.3.0."
             )
             self.lora_request = LoRARequest("finetuned", 1, lora_local_path)

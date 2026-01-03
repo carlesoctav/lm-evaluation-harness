@@ -1,0 +1,3 @@
+include: _olmo3_agieval_template.yaml
+task: olmo3_agieval_logiqa_en
+dataset_path: hails/agieval-logiqa-en

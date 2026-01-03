@@ -1,0 +1,25 @@
+# OLMo3 Minimal - Full suite (all generate_until)
+# Matches olmo3:adapt:noapi from olmes
+group: olmo3_minimal
+task:
+  # Knowledge
+  - olmo3_mmlu
+  - olmo3_popqa
+  # Reasoning
+  - olmo3_bbh
+  - olmo3_gpqa
+  - olmo3_zebralogic
+  - olmo3_agieval
+  # Math
+  - olmo3_gsm8k
+  - olmo3_math
+  - olmo3_omega
+  - olmo3_aime
+  # Coding
+  - olmo3_humaneval
+  - olmo3_mbpp
+  - olmo3_livecodebench
+  # Instruction Following
+  - olmo3_ifeval
+metadata:
+  version: 1.0

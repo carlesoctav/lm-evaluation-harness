@@ -1,0 +1,25 @@
+# ZebraLogic - Multiple choice mode (minimal prompt)
+task: olmo3_zebralogic
+dataset_path: WildEval/ZebraLogic
+dataset_name: mc_mode
+output_type: generate_until
+test_split: test
+doc_to_text: "{{puzzle}}\n\n{{question}}\n{% for choice in choices %}{{loop.index}}. {{choice}}\n{% endfor %}"
+doc_to_target: "{{answer}}"
+num_fewshot: 0
+generation_kwargs:
+  until:
+    - "\n\n"
+    - "</s>"
+    - "<|im_end|>"
+    - "<|eot_id|>"
+  do_sample: false
+  temperature: 0.0
+  max_gen_toks: 64
+metric_list:
+  - metric: exact_match
+    aggregation: mean
+    higher_is_better: true
+    ignore_case: true
+metadata:
+  version: 1.0

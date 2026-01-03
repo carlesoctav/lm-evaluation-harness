@@ -1,0 +1,11 @@
+# AIME 2024 + 2025 - Minimal prompt
+group: olmo3_aime
+task:
+  - olmo3_aime24
+  - olmo3_aime25
+aggregate_metric_list:
+  - metric: exact_match
+    aggregation: mean
+    weight_by_size: true
+metadata:
+  version: 1.0

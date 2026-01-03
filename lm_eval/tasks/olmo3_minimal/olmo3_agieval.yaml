@@ -1,0 +1,17 @@
+# AGI-Eval English - Generate-based (all subtasks)
+group: olmo3_agieval
+task:
+  - olmo3_agieval_aqua_rat
+  - olmo3_agieval_gaokao_english
+  - olmo3_agieval_logiqa_en
+  - olmo3_agieval_lsat_ar
+  - olmo3_agieval_lsat_lr
+  - olmo3_agieval_lsat_rc
+  - olmo3_agieval_sat_en
+  - olmo3_agieval_sat_math
+aggregate_metric_list:
+  - metric: exact_match
+    aggregation: mean
+    weight_by_size: true
+metadata:
+  version: 1.0
