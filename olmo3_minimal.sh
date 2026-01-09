@@ -4,48 +4,56 @@
 # Full suite matching olmo3:adapt:noapi from olmes
 # All generate_until with minimal prompts (just question)
 #
-# Usage: ./olmo3_minimal.sh --model <model_path> [options]
+# Usage: ./olmo3_minimal.sh --model <model_name> [options]
+#
+# Requires: vLLM server running at --base_url (default: http://localhost:8000)
+#   Start with: vllm serve <model_path> --port 8000
 
 set -e
 
+# HuggingFace cache directory
+export HF_HOME="${HF_HOME:-/mnt/carles/.cache}"
+
 MODEL=""
-DTYPE="bfloat16"
-BATCH_SIZE="auto"
+BASE_URL="http://localhost:8000"
+BATCH_SIZE="1"
 OUTPUT_DIR="results"
-TENSOR_PARALLEL_SIZE=4
-MAX_MODEL_LEN=8192
 LIMIT=""
 APPLY_CHAT_TEMPLATE=""
+NUM_CONCURRENT=32
 
 while [[ $# -gt 0 ]]; do
     case $1 in
         --model) MODEL="$2"; shift 2 ;;
-        --dtype) DTYPE="$2"; shift 2 ;;
-        --tp) TENSOR_PARALLEL_SIZE="$2"; shift 2 ;;
-        --max_model_len) MAX_MODEL_LEN="$2"; shift 2 ;;
+        --base_url) BASE_URL="$2"; shift 2 ;;
         --limit) LIMIT="--limit $2"; shift 2 ;;
         --apply_chat_template) APPLY_CHAT_TEMPLATE="--apply_chat_template"; shift ;;
         --output_dir) OUTPUT_DIR="$2"; shift 2 ;;
         --batch_size) BATCH_SIZE="$2"; shift 2 ;;
+        --num_concurrent) NUM_CONCURRENT="$2"; shift 2 ;;
         -h|--help)
-            echo "Usage: ./olmo3_minimal.sh --model <model_path> [options]"
+            echo "Usage: ./olmo3_minimal.sh --model <model_name> [options]"
+            echo ""
+            echo "Requires vLLM server running at --base_url"
             echo ""
             echo "Options:"
-            echo "  --model              Model path (required)"
-            echo "  --dtype              Data type (default: bfloat16)"
-            echo "  --tp                 Tensor parallel size (default: 4)"
-            echo "  --max_model_len      Max model length (default: 8192)"
+            echo "  --model              Model name as served by vLLM (required)"
+            echo "  --base_url           vLLM server URL (default: http://localhost:8000)"
             echo "  --limit              Limit examples per task"
             echo "  --apply_chat_template Apply chat template"
             echo "  --output_dir         Output directory (default: results)"
-            echo "  --batch_size         Batch size (default: auto)"
+            echo "  --batch_size         Batch size (default: 1)"
+            echo "  --num_concurrent     Concurrent API requests (default: 32)"
             echo ""
-            echo "Tasks (14 total):"
+            echo "Tasks (enabled):"
             echo "  Knowledge: mmlu, popqa"
             echo "  Reasoning: bbh, gpqa, zebralogic, agieval_en"
-            echo "  Math: gsm8k, math, omega, aime (2024+2025)"
-            echo "  Coding: humaneval, mbpp, livecodebench"
+            echo "  Math: gsm8k, aime (2024+2025)"
             echo "  IF: ifeval"
+            echo ""
+            echo "Tasks (disabled - need code execution):"
+            echo "  Coding: humaneval, mbpp, livecodebench"
+            echo "  Math: math, omega"
             exit 0
             ;;
         *) echo "Unknown: $1"; exit 1 ;;
@@ -54,13 +62,11 @@ done
 
 if [ -z "$MODEL" ]; then
     echo "Error: --model is required"
+    echo "Hint: Use the model name as served by vLLM (check: curl $BASE_URL/v1/models)"
     exit 1
 fi
 
-# Enable code execution for humaneval/mbpp/livecodebench
-export HF_ALLOW_CODE_EVAL="1"
-
-MODEL_NAME=$(basename "$MODEL")
+MODEL_NAME=$(echo "$MODEL" | tr '/' '_')
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)
 OUTPUT_PATH="${OUTPUT_DIR}/${MODEL_NAME}_olmo3_minimal_${TIMESTAMP}"
 
@@ -68,19 +74,19 @@ echo "==========================================="
 echo "OLMo3 Minimal Prompt Evaluation"
 echo "==========================================="
 echo "Model: $MODEL"
+echo "Base URL: $BASE_URL"
 echo "Output: $OUTPUT_PATH"
-echo "TP: $TENSOR_PARALLEL_SIZE"
+echo "Concurrent requests: $NUM_CONCURRENT"
 echo ""
-echo "Tasks (14):"
+echo "Tasks:"
 echo "  Knowledge: mmlu, popqa"
-echo "  Reasoning: bbh, gpqa, zebralogic, agieval_en"
-echo "  Math: gsm8k, math, omega, aime24, aime25"
-echo "  Coding: humaneval, mbpp, livecodebench"
+echo "  Reasoning: bbh, gpqa, zebralogic, agieval"
+echo "  Math: gsm8k, aime24, aime25"
 echo "  IF: ifeval"
 echo "==========================================="
 
-lm_eval run --model vllm \
-    --model_args "pretrained=$MODEL,dtype=$DTYPE,tensor_parallel_size=$TENSOR_PARALLEL_SIZE,max_model_len=$MAX_MODEL_LEN" \
+lm_eval run --model local-chat-completions \
+    --model_args "model=$MODEL,base_url=$BASE_URL/v1/chat/completions,num_concurrent=$NUM_CONCURRENT" \
     --tasks olmo3_minimal \
     --batch_size "$BATCH_SIZE" \
     $APPLY_CHAT_TEMPLATE \

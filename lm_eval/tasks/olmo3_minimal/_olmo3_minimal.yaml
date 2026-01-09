@@ -5,21 +5,21 @@ task:
   # Knowledge
   - olmo3_mmlu
   - olmo3_popqa
-  # Reasoning
-  - olmo3_bbh
-  - olmo3_gpqa
+  # Reasoning (use existing bbh_zeroshot group)
+  - bbh_zeroshot
+  # - olmo3_gpqa  # Gated dataset - requires HF login
   - olmo3_zebralogic
   - olmo3_agieval
   # Math
   - olmo3_gsm8k
-  - olmo3_math
-  - olmo3_omega
+  # - olmo3_math
+  # - olmo3_omega
   - olmo3_aime
-  # Coding
-  - olmo3_humaneval
-  - olmo3_mbpp
-  - olmo3_livecodebench
-  # Instruction Following
-  - olmo3_ifeval
+  # Coding (require code execution)
+  # - olmo3_humaneval
+  # - olmo3_mbpp
+  # - olmo3_livecodebench
+  # Instruction Following (use existing ifeval task)
+  - ifeval
 metadata:
   version: 1.0

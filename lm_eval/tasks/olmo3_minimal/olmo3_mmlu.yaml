@@ -3,24 +3,36 @@ dataset_path: cais/mmlu
 dataset_name: all
 output_type: generate_until
 test_split: test
-doc_to_text: "{{question}}\nA. {{choices[0]}}\nB. {{choices[1]}}\nC. {{choices[2]}}\nD. {{choices[3]}}"
+doc_to_text: |
+  {{question}}
+  A. {{choices[0]}}
+  B. {{choices[1]}}
+  C. {{choices[2]}}
+  D. {{choices[3]}}
+  
+  Follow this format:
+  Reasoning:
+  <step-by-step reasoning>
+  Answer:
+  <letter>
 doc_to_target: "{{['A', 'B', 'C', 'D'][answer]}}"
 num_fewshot: 0
 generation_kwargs:
   until:
-    - "\n"
     - "</s>"
     - "<|im_end|>"
     - "<|eot_id|>"
   do_sample: false
   temperature: 0.0
-  max_gen_toks: 32
+  max_gen_toks: 1024
+  structured_outputs:
+    regex: 'Reasoning:\n(.|\n)*?Answer:\n[A-D]'
 filter_list:
   - name: "flexible-extract"
     filter:
       - function: "regex"
         group_select: 0
-        regex_pattern: "\\b([A-D])\\b"
+        regex_pattern: 'Answer:\n([A-D])'
       - function: "take_first"
 metric_list:
   - metric: exact_match

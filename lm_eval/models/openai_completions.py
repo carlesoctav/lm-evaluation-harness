@@ -187,6 +187,17 @@ class LocalChatCompletion(LocalCompletionsAPI):
             "LocalChatCompletion expects messages as list[dict]. "
             "If you see this error, ensure --apply_chat_template is set or upstream code formats messages correctly."
         )
+        # Handle models that don't support system messages (e.g., Gemma-3)
+        # by merging system content into the first user message
+        if messages and messages[0].get("role") == "system":
+            system_content = messages[0].get("content", "")
+            messages = messages[1:]  # Remove system message
+            if messages and messages[0].get("role") == "user":
+                # Prepend system content to first user message
+                messages[0] = {
+                    **messages[0],
+                    "content": f"{system_content}\n\n{messages[0].get('content', '')}",
+                }
         gen_kwargs = gen_kwargs or {}
         gen_kwargs.pop("do_sample", False)
         if "max_tokens" in gen_kwargs:
