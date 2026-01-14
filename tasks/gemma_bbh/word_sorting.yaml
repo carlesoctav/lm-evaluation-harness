@@ -1,0 +1,22 @@
+task: gemma_bbh_word_sorting
+dataset_path: lukaemon/bbh
+dataset_name: word_sorting
+include: _gemma_bbh_template.yaml
+doc_to_text: |
+  {{input}}
+  
+  Put your final answer in <answer>X</answer> where X is your answer.
+filter_list:
+  - name: "xml-strict-match"
+    filter:
+      - function: "regex"
+        regex_pattern: "<answer>([\\s\\S]*?)</answer>"
+      - function: "take_first"
+  - name: "xml-match"
+    filter:
+      - function: "regex"
+        regex_pattern: "<answer>([\\s\\S]*)"
+      - function: "take_first"
+  - name: "flexible-extract"
+    filter:
+      - function: "take_first"

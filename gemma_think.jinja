@@ -1,5 +1,5 @@
 {{ bos_token }}
-{%- set first_user_prefix = 'close reasoning with </reasoning> encaplusated the answer with <answer> </answer> \n' -%}
+{%- set first_user_prefix = 'Think through your approach in <reasoning></reasoning> tags, then provide your complete response in <answer></answer> tags. For creative tasks, briefly plan in reasoning, then write the full creative output in answer.\n\n' -%}
 {%- set loop_messages = messages -%}
 {%- for message in loop_messages -%}
     {%- if (message['role'] == 'user') != (loop.index0 % 2 == 0) -%}
@@ -49,5 +49,5 @@
     {%- endif -%}
 {%- endfor -%}
 {%- if add_generation_prompt -%}
-    {{'<start_of_turn>model\n<reasoning>\n'}}
+    {{'<start_of_turn>model\n'}}
 {%- endif -%}

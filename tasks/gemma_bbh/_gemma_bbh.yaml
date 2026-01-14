@@ -1,0 +1,36 @@
+group: gemma_bbh
+task:
+  - gemma_bbh_boolean_expressions
+  - gemma_bbh_causal_judgement
+  - gemma_bbh_date_understanding
+  - gemma_bbh_disambiguation_qa
+  - gemma_bbh_dyck_languages
+  - gemma_bbh_formal_fallacies
+  - gemma_bbh_geometric_shapes
+  - gemma_bbh_hyperbaton
+  - gemma_bbh_logical_deduction_five_objects
+  - gemma_bbh_logical_deduction_seven_objects
+  - gemma_bbh_logical_deduction_three_objects
+  - gemma_bbh_movie_recommendation
+  - gemma_bbh_multistep_arithmetic_two
+  - gemma_bbh_navigate
+  - gemma_bbh_object_counting
+  - gemma_bbh_penguins_in_a_table
+  - gemma_bbh_reasoning_about_colored_objects
+  - gemma_bbh_ruin_names
+  - gemma_bbh_salient_translation_error_detection
+  - gemma_bbh_snarks
+  - gemma_bbh_sports_understanding
+  - gemma_bbh_temporal_sequences
+  - gemma_bbh_tracking_shuffled_objects_five_objects
+  - gemma_bbh_tracking_shuffled_objects_seven_objects
+  - gemma_bbh_tracking_shuffled_objects_three_objects
+  - gemma_bbh_web_of_lies
+  - gemma_bbh_word_sorting
+aggregate_metric_list:
+  - metric: exact_match
+    aggregation: mean
+    weight_by_size: true
+    filter_list: flexible-extract
+metadata:
+  version: 1.0

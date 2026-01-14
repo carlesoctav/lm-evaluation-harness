@@ -32,6 +32,7 @@ dependencies = [
     "dill",
     "word2number",
     "more_itertools",
+    "kaggle>=1.8.3",
 ]
 
 [tool.setuptools.packages.find]

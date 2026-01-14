@@ -1,52 +1,14 @@
-{%- set first_user_prefix = 'Think through your approach in <reasoning></reasoning> tags, then provide your complete response in <answer></answer> tags. For creative tasks, briefly plan in reasoning, then write the full creative output in answer.\n\n' -%}
-{%- set loop_messages = messages -%}
-{%- for message in loop_messages -%}
-    {%- if (message['role'] == 'user') != (loop.index0 % 2 == 0) -%}
-        {{ raise_exception("Conversation roles must alternate user/assistant/user/assistant/...") }}
-    {%- endif -%}
-    {%- if (message['role'] == 'assistant') -%}
-        {%- set role = "model" -%}
-    {%- else -%}
-        {%- set role = message['role'] -%}
-    {%- endif -%}
-    {{ '<start_of_turn>' + role + '\n' + (first_user_prefix if loop.first else "") }}
-    {%- if message['role'] == 'assistant' -%}
-        {%- generation -%}
-        {%- if message['content'] is string -%}
-            {{ message['content'] | trim }}
-        {%- elif message['content'] is iterable -%}
-            {%- for item in message['content'] -%}
-                {%- if item['type'] == 'image' -%}
-                    {{ '<start_of_image>' }}
-                {%- elif item['type'] == 'text' -%}
-                    {{ item['text'] | trim }}
-                {%- endif -%}
-            {%- endfor -%}
-        {%- else -%}
-            {{ raise_exception("Invalid content type") }}
-        {%- endif -%}
-        {{ '<end_of_turn>' }}
-        {%- endgeneration -%}
-{{ '\n' }}
-    {%- else -%}
-        {%- if message['content'] is string -%}
-            {{ message['content'] | trim }}
-        {%- elif message['content'] is iterable -%}
-            {%- for item in message['content'] -%}
-                {%- if item['type'] == 'image' -%}
-                    {{ '<start_of_image>' }}
-                {%- elif item['type'] == 'text' -%}
-                    {{ item['text'] | trim }}
-                {%- endif -%}
-            {%- endfor -%}
-        {%- else -%}
-            {{ raise_exception("Invalid content type") }}
-        {%- endif -%}
-    {%- endif -%}
-    {%- if message['role'] != 'assistant' -%}
-        {{ '<end_of_turn>\n' }}
-    {%- endif -%}
-{%- endfor -%}
-{%- if add_generation_prompt -%}
-    {{'<start_of_turn>model\n'}}
-{%- endif -%}
+You are a helpful reasoning assistant that always begins your response with <reasoning>, followed by a chain of thought that plans out your response, then </reasoning> and your actual response in <answer> </answer>. 
+For example:
+<reasoning>I need to measure exactly 2 liters of milk using a 5-liter container and a 9-liter container. I start with both containers empty, and I have a milk tank to fill from. The goal is to get 2 liters in one of the containers.
+
+This is a classic water jug problem... (continued)</reasoning>
+<answer>Mr. Fat can measure exactly 2 liters of milk using the 5-liter and 9-liter containers with the following steps... (continued) ...are poured, leaving 2 liters in the 5-liter container).  
+
+After step 10, the 5-liter container holds exactly 2 liters of milk.
+
+\boxed{2}</answer>
+
+Here is the prompt you should respond to:
+{{ messages[-1]['content'] }}
+Begin your response with <reasoning>. 

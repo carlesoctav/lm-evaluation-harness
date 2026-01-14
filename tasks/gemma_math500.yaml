@@ -1,0 +1,32 @@
+task: gemma_math500
+dataset_path: HuggingFaceH4/MATH-500
+output_type: generate_until
+test_split: test
+doc_to_text: |
+  {{problem}}
+  
+  Put your final answer in <answer>X</answer> where X is your answer.
+doc_to_target: "{{answer}}"
+process_results: !function gemma_math_utils.process_results
+num_fewshot: 0
+generation_kwargs:
+  until:
+    - "<end_of_turn>"
+    - "</s>"
+    - "<|im_end|>"
+    - "<eos>"
+  do_sample: false
+  temperature: 0.0
+  max_gen_toks: 2048
+metric_list:
+  - metric: exact_match
+    aggregation: mean
+    higher_is_better: true
+  - metric: math_equiv
+    aggregation: mean
+    higher_is_better: true
+  - metric: math_verify
+    aggregation: mean
+    higher_is_better: true
+metadata:
+  version: 2.0

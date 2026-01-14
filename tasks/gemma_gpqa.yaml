@@ -1,0 +1,56 @@
+task: gemma_gpqa
+dataset_path: Idavidrein/gpqa
+dataset_name: gpqa_diamond
+output_type: generate_until
+training_split: train
+test_split: train
+process_docs: !function utils.process_docs
+doc_to_text: |
+  {{Question}}
+  A. {{choice1}}
+  B. {{choice2}}
+  C. {{choice3}}
+  D. {{choice4}}
+  
+  Put your answer in <answer>X</answer> where X is your answer letter (A-D).
+doc_to_target: "{{answer.strip('()')}}"
+num_fewshot: 0
+generation_kwargs:
+  until:
+    - "<end_of_turn>"
+    - "</s>"
+    - "<|im_end|>"
+    - "<eos>"
+  do_sample: false
+  temperature: 0.0
+  max_gen_toks: 1024
+filter_list:
+  - name: "xml-strict-match"
+    filter:
+      - function: "regex"
+        regex_pattern: '<answer>([\s\S]*?)</answer>'
+      - function: "regex"
+        group_select: -1
+        regex_pattern: '([A-D])'
+      - function: "take_first"
+  - name: "xml-match"
+    filter:
+      - function: "regex"
+        regex_pattern: '<answer>([\s\S]*)'
+      - function: "regex"
+        group_select: -1
+        regex_pattern: '([A-D])'
+      - function: "take_first"
+  - name: "flexible-extract"
+    filter:
+      - function: "regex"
+        group_select: -1
+        regex_pattern: '([A-D])'
+      - function: "take_first"
+metric_list:
+  - metric: exact_match
+    aggregation: mean
+    higher_is_better: true
+    ignore_case: true
+metadata:
+  version: 1.0

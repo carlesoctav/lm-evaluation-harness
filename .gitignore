@@ -36,8 +36,7 @@ lm_eval/caching/.cache
 lm_cache/
 
 # Logging
-*.log
-logs/
+
 
 # wandb experiment tracking
 wandb/

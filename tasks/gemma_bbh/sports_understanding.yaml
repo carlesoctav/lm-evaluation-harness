@@ -1,0 +1,31 @@
+task: gemma_bbh_sports_understanding
+dataset_path: lukaemon/bbh
+dataset_name: sports_understanding
+include: _gemma_bbh_template.yaml
+doc_to_text: |
+  {{input}}
+  
+  Put your answer in <answer>X</answer> where X is Yes or No.
+filter_list:
+  - name: "xml-strict-match"
+    filter:
+      - function: "regex"
+        regex_pattern: "<answer>([\\s\\S]*?)</answer>"
+      - function: "regex"
+        group_select: -1
+        regex_pattern: "\\b([Yy]es|[Nn]o)\\b"
+      - function: "take_first"
+  - name: "xml-match"
+    filter:
+      - function: "regex"
+        regex_pattern: "<answer>([\\s\\S]*)"
+      - function: "regex"
+        group_select: -1
+        regex_pattern: "\\b([Yy]es|[Nn]o)\\b"
+      - function: "take_first"
+  - name: "flexible-extract"
+    filter:
+      - function: "regex"
+        group_select: -1
+        regex_pattern: "\\b([Yy]es|[Nn]o)\\b"
+      - function: "take_first"

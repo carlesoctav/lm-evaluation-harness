@@ -1,0 +1,27 @@
+# Gemma BBH - Base template for all subtasks
+dataset_path: lukaemon/bbh
+output_type: generate_until
+test_split: test
+doc_to_text: |
+  {{input}}
+  
+  Put your final answer in <answer>X</answer> where X is your answer.
+doc_to_target: "{{target}}"
+num_fewshot: 0
+generation_kwargs:
+  until:
+    - "<end_of_turn>"
+    - "</s>"
+    - "<|im_end|>"
+    - "<eos>"
+  do_sample: false
+  temperature: 0.0
+  max_gen_toks: 1024
+metric_list:
+  - metric: exact_match
+    aggregation: mean
+    higher_is_better: true
+    ignore_case: true
+    ignore_punctuation: true
+metadata:
+  version: 1.0

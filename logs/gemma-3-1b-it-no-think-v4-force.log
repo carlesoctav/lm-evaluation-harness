@@ -1,0 +1,15 @@
+==============================================
+Gemma-Style Evaluation
+==============================================
+Model: G-reen/gemma-2-2b-it-fft-simpo-adj
+Base URL: http://localhost:8000/v1/chat/completions
+Tasks: gemma_gsm8k,gemma_gpqa,gemma_mmlu_pro,gemma_ifeval,gemma_zebralogic,gemma_bbh,gemma_math500
+Output: results/gemma-3-1b-it-no-think-v4-force/G-reen_gemma-2-2b-it-fft-simpo-adj_20260109_102216
+==============================================
+2026-01-09:10:22:16 INFO     [config.evaluate_config:301] Using default fewshot_as_multiturn=True.
+2026-01-09:10:22:20 INFO     [_cli.run:375] Including path: tasks
+2026-01-09:10:22:20 INFO     [_cli.run:376] Selected Tasks: ['gemma_gsm8k', 'gemma_gpqa', 'gemma_mmlu_pro', 'gemma_ifeval', 'gemma_zebralogic', 'gemma_bbh', 'gemma_math500']
+2026-01-09:10:22:22 INFO     [evaluator:210] Setting random seed to 0 | Setting numpy seed to 1234 | Setting torch manual seed to 1234 | Setting fewshot manual seed to 1234
+2026-01-09:10:22:22 INFO     [evaluator:235] Initializing local-chat-completions model, with arguments: {'model': 'G-reen/gemma-2-2b-it-fft-simpo-adj', 'base_url': 'http://localhost:8000/v1/chat/completions', 'num_concurrent': 100}
+2026-01-09:10:22:22 INFO     [models.api_models:172] Using max length 2048 - 1
+2026-01-09:10:22:22 INFO     [models.api_models:193] Using tokenizer None

@@ -1,0 +1,48 @@
+tag:
+  - math_word_problems
+task: gemma_gsm8k_think
+dataset_path: gsm8k
+dataset_name: main
+output_type: generate_until
+training_split: train
+fewshot_split: train
+test_split: test
+doc_to_text: "{{question}}\n\nFollow this format:\n<reasoning>\nstep-by-step reasoning\n</reasoning>\n<answer>\nfinal answer\n</answer>"
+doc_to_target: "{{answer}}"
+metric_list:
+  - metric: exact_match
+    aggregation: mean
+    higher_is_better: true
+    ignore_case: true
+    ignore_punctuation: false
+    regexes_to_ignore:
+      - ","
+      - "\\$"
+      - "(?s).*#### "
+      - "\\.$"
+generation_kwargs:
+  until:
+    - "</s>"
+    - "<|im_end|>"
+    - "<|eot_id|>"
+    - "<eos>"
+  do_sample: false
+  temperature: 0.0
+  structured_outputs:
+    regex: '<reasoning>(.|\n)*?</reasoning>\n<answer>[0-9,.$ -]+</answer>'
+repeats: 1
+num_fewshot: 0
+filter_list:
+  - name: "strict-match"
+    filter:
+      - function: "regex"
+        regex_pattern: "<answer>([0-9.,$ -]+)</answer>"
+      - function: "take_first"
+  - name: "flexible-extract"
+    filter:
+      - function: "regex"
+        group_select: 0
+        regex_pattern: "<answer>([0-9.,$ -]+)</answer>"
+      - function: "take_first"
+metadata:
+  version: 3.0

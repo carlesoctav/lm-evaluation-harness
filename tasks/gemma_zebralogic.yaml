@@ -1,0 +1,54 @@
+task: gemma_zebralogic
+dataset_path: WildEval/ZebraLogic
+dataset_name: mc_mode
+output_type: generate_until
+test_split: test
+doc_to_text: |
+  {{puzzle}}
+
+  {{question}}
+  {% for choice in choices %}{{ 'ABCDEFGHIJ'[loop.index0] }}. {{choice}}
+  {% endfor %}
+  
+  Put your answer in <answer>X</answer> where X is your answer letter (A-J).
+doc_to_target: "{{ 'ABCDEFGHIJ'[choices.index(answer)] }}"
+num_fewshot: 0
+generation_kwargs:
+  until:
+    - "<end_of_turn>"
+    - "</s>"
+    - "<|im_end|>"
+    - "<eos>"
+  do_sample: false
+  temperature: 0.0
+  max_gen_toks: 1024
+filter_list:
+  - name: "xml-strict-match"
+    filter:
+      - function: "regex"
+        regex_pattern: "<answer>([\\s\\S]*?)</answer>"
+      - function: "regex"
+        group_select: -1
+        regex_pattern: "([A-J])"
+      - function: "take_first"
+  - name: "xml-match"
+    filter:
+      - function: "regex"
+        regex_pattern: "<answer>([\\s\\S]*)"
+      - function: "regex"
+        group_select: -1
+        regex_pattern: "([A-J])"
+      - function: "take_first"
+  - name: "flexible-extract"
+    filter:
+      - function: "regex"
+        group_select: -1
+        regex_pattern: "([A-J])"
+      - function: "take_first"
+metric_list:
+  - metric: exact_match
+    aggregation: mean
+    higher_is_better: true
+    ignore_case: true
+metadata:
+  version: 1.0
